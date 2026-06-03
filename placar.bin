@@ -1,0 +1,5 @@
+typedef struct tipo_placar
+{
+char nome[20];
+int time;
+} TIPO_PLACAR;
