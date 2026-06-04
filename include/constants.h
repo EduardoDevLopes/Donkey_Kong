@@ -16,5 +16,6 @@ typedef enum GameState {
 #define SCREEN_WIDTH 600   // 30 * 20
 #define SCREEN_HEIGHT 600  // 30 * 20
 #define TARGET_FPS 60
+#define PLAYER_SPEED 150.0f //Velocidade em pixels por segundo
 
 #endif

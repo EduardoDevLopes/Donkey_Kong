@@ -3,27 +3,44 @@
 #include <menu.h>
 #include <constants.h>
 #include <pause.h>
+#include <player.h>
 
 int main(void) {
     // Inicialização da janela padrão fixa (600 x 600)
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Donkey Kong INF");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Donkey Kong");
     SetTargetFPS(TARGET_FPS);
 
     GameState estadoAtual = STATE_MENU;
     int opcaoSelecionadaMenu = 0;
     int opcaoSelecionadaPausa = 0;
 
+    //Declaração da instância do jogador estruturado
+    Player jogador;
+    InitPlayer(&jogador);
+
+
     // Loop principal do jogo
     while (estadoAtual != STATE_EXIT && !WindowShouldClose()) {
         
-        // --- PASSO 1: Atualizar a lógica dependendo do Estado ---
+        // Atualiza a lógica dependendo do Estado
         switch (estadoAtual) {
 
-            case STATE_MENU:
+            case STATE_MENU: {
+                GameState estadoAnterior = estadoAtual;
                 UpdateMenu(&estadoAtual, &opcaoSelecionadaMenu);
+               
+                //Se o usuário entrou no jogo pelo menu inicializa o personagem
+                if (estadoAnterior == STATE_MENU && estadoAtual == STATE_PLAYING){
+                    InitPlayer(&jogador);
+                }    
+            }
+                
                 break;
 
             case STATE_PLAYING:
+                // Atualiza a lógica de movimentação e teclas do jogador
+                UpdatePlayer(&jogador);
+
                 if (IsKeyPressed(KEY_TAB)) {
                     opcaoSelecionadaPausa = 0; //Sempre define a pausa na primeira opção
                     estadoAtual = STATE_PAUSE; 
@@ -53,18 +70,16 @@ int main(void) {
                 break;
                 
             case STATE_PLAYING:
-                // Representação visual da área útil do jogo rodando ao fundo
-                ClearBackground(BLUE);
-                DrawText("JOGO EM EXECUCAO", SCREEN_WIDTH / 2 - MeasureText("JOGO EM EXECUCAO", 24) / 2, 250, 24, WHITE);
-                DrawText("Pressione TAB para pausar", SCREEN_WIDTH / 2 - MeasureText("Pressione TAB para pausar", 18) / 2, 300, 18, LIGHTGRAY);
+                // Simulação do fundo de jogo limpo de 600x600 pixels
+                DrawText("Pressione TAB para pausar", 20, 20, 16, LIGHTGRAY);
+                
+                // Desenha o bloco do jogador na tela nas coordenadas calculadas
+                DrawPlayer(jogador);
                 break;
                     
             case STATE_PAUSE:
-                // Mantém o cenário do jogo desenhado embaixo e plota o menu de pausa por cima
-                ClearBackground(BLUE); 
-                DrawText("JOGO EM EXECUCAO", SCREEN_WIDTH / 2 - MeasureText("JOGO EM EXECUCAO", 24) / 2, 250, 24, WHITE);
-                    
-                // Desenha a máscara e opções da pausa por cima
+                // Mantém o jogador visível ao fundo de forma estática enquanto pausado
+                DrawPlayer(jogador);
                 DrawPauseMenu(opcaoSelecionadaPausa);
                 break;
                     
