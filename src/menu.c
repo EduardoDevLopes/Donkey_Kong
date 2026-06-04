@@ -1,4 +1,3 @@
-// src/menu.c
 #include <raylib.h>
 #include <menu.h>
 #include <constants.h>

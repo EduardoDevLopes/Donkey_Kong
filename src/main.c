@@ -1,62 +1,76 @@
-// src/main.c
 #include <raylib.h>
 #include <common.h>
 #include <menu.h>
 #include <constants.h>
+#include <pause.h>
 
 int main(void) {
-    // 1. Configuração para Tela Cheia usando a resolução nativa do sistema
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Donkey Kong INF"); // Passar 0, 0 faz a Raylib abrir na resolução do sistema
-    SetTargetFPS(TARGET_FPS);            // Trava o FPS em 60
+    // Inicialização da janela padrão fixa (600 x 600)
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Donkey Kong INF");
+    SetTargetFPS(TARGET_FPS);
 
     GameState estadoAtual = STATE_MENU;
     int opcaoSelecionadaMenu = 0;
+    int opcaoSelecionadaPausa = 0;
 
     // Loop principal do jogo
     while (estadoAtual != STATE_EXIT && !WindowShouldClose()) {
         
         // --- PASSO 1: Atualizar a lógica dependendo do Estado ---
         switch (estadoAtual) {
+
             case STATE_MENU:
                 UpdateMenu(&estadoAtual, &opcaoSelecionadaMenu);
                 break;
+
             case STATE_PLAYING:
-                if (IsKeyPressed(KEY_TAB)) estadoAtual = STATE_PAUSE; 
+                if (IsKeyPressed(KEY_TAB)) {
+                    opcaoSelecionadaPausa = 0; //Sempre define a pausa na primeira opção
+                    estadoAtual = STATE_PAUSE; 
+                }
                 break;
+
             case STATE_PAUSE:
-                if (IsKeyPressed(KEY_TAB)) estadoAtual = STATE_PLAYING;
+                UpdatePauseMenu(&estadoAtual, &opcaoSelecionadaPausa);
                 break;
+
             case STATE_RANKING:
-                if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ENTER)) estadoAtual = STATE_MENU;
+                if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ENTER)) 
+                    estadoAtual = STATE_MENU;
                 break;
+
             default:
                 break;
         }
 
-        // --- PASSO 2: Desenhar os elementos na tela ---
+        // Renderização Gráfica
         BeginDrawing();
-        
-        // Armar os pontos centrais para telas de estado genéricas
-        int centroX = GetScreenWidth() / 2;
-        int centroY = GetScreenHeight() / 2;
+        ClearBackground(BLACK);
 
         switch (estadoAtual) {
             case STATE_MENU:
                 DrawMenu(opcaoSelecionadaMenu);
                 break;
+                
             case STATE_PLAYING:
+                // Representação visual da área útil do jogo rodando ao fundo
                 ClearBackground(BLUE);
-                DrawText("JOGO EM EXECUCAO", centroX - MeasureText("JOGO EM EXECUCAO", 24) / 2, centroY - 30, 24, WHITE);
-                DrawText("Pressione TAB para pausar", centroX - MeasureText("Pressione TAB para pausar", 18) / 2, centroY + 20, 18, LIGHTGRAY);
+                DrawText("JOGO EM EXECUCAO", SCREEN_WIDTH / 2 - MeasureText("JOGO EM EXECUCAO", 24) / 2, 250, 24, WHITE);
+                DrawText("Pressione TAB para pausar", SCREEN_WIDTH / 2 - MeasureText("Pressione TAB para pausar", 18) / 2, 300, 18, LIGHTGRAY);
                 break;
+                    
             case STATE_PAUSE:
-                ClearBackground(DARKGRAY);
-                DrawText("JOGO PAUSADO", centroX - MeasureText("JOGO PAUSADO", 24) / 2, centroY, 24, YELLOW);
+                // Mantém o cenário do jogo desenhado embaixo e plota o menu de pausa por cima
+                ClearBackground(BLUE); 
+                DrawText("JOGO EM EXECUCAO", SCREEN_WIDTH / 2 - MeasureText("JOGO EM EXECUCAO", 24) / 2, 250, 24, WHITE);
+                    
+                // Desenha a máscara e opções da pausa por cima
+                DrawPauseMenu(opcaoSelecionadaPausa);
                 break;
+                    
             case STATE_RANKING:
-                ClearBackground(BLACK);
-                DrawText("RANKING - TOP 10", centroX - MeasureText("RANKING - TOP 10", 30) / 2, centroY - 100, 30, GOLD);
-                DrawText("Pressione ENTER para voltar", centroX - MeasureText("Pressione ENTER para voltar", 18) / 2, centroY + 150, 18, GRAY);
+                DrawText("RANKING - TOP 10", SCREEN_WIDTH / 2 - MeasureText("RANKING - TOP 10", 30) / 2, 100, 30, GOLD);
+                DrawText("Pressione ENTER para voltar", SCREEN_WIDTH / 2 - MeasureText("Pressione ENTER para voltar", 18) / 2, 500, 18, GRAY);
                 break;
             default:
                 break;
