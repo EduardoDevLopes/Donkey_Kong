@@ -3,29 +3,23 @@
 
 #include <constants.h>
 
-// Estrutura de posição aninhada, conforme sugerido nas dicas do enunciado
-typedef struct Position {
-    int row;    // Linha na matriz (0 a 29)
-    int col;    // Coluna na matriz (0 a 29)
-} Position;
+typedef struct Posi {
+    int row;
+    int col;
+} Posi;
 
-typedef enum PlayerState {
-    PLAYER_ALIVE,
-    PLAYER_DEAD
-} PlayerState;
-
-// Estrutura principal do jogador com os dados obrigatórios do enunciado
 typedef struct Player {
-    Position pos;       // Localização (linha, coluna)
     float x;
     float y;
-    PlayerState state;  // Estado (ativo ou morto)
-    int score;          // Pontuação (baseada no menor de execução)
+    Posi pos;
 } Player;
 
-// Protótipos das funções de subprogramação modular
+// Forward declaration: avisa o compilador que a struct Map existe,
+// evitando dependência cíclica entre player.h e map.h
+typedef struct Map Map;
+
 void InitPlayer(Player *player);
-void UpdatePlayer(Player *player);
+void UpdatePlayer(Player *player, Map map); // Agora recebe o mapa para testar as colisões
 void DrawPlayer(Player player);
 
 #endif
