@@ -19,6 +19,8 @@ typedef enum GameState {
 #define MAP_ROWS 30
 #define MAP_COLS 30
 
-#define PLAYER_SPEED 150.0f  
+#define PLAYER_SPEED 300.0f  
+#define ENEMY_SPEED 400.0f 
+
 
 #endif

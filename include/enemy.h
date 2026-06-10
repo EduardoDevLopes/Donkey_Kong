@@ -4,8 +4,6 @@
 #include <raylib.h>
 #include <map.h>
 
-#define ENEMY_SPEED 100.0f // Velocidade do inimigo (ajustável)
-
 typedef struct {
     float x, y;
     struct {

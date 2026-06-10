@@ -17,8 +17,6 @@ void InitEnemies(Enemy enemies[], int *enemyCount, Map map) {
                 
                 (*enemyCount)++;
                 
-                // Opcional: Se não quiser que o caractere 'E' interfira na renderização lógica do mapa,
-                // você pode deixar como está, pois o switch do mapa apenas ignorará ou desenhará o fundo.
             }
         }
     }
@@ -30,30 +28,37 @@ void UpdateEnemies(Enemy enemies[], int enemyCount, Map map) {
     for (int i = 0; i < enemyCount; i++) {
         if (!enemies[i].active) continue;
 
+        // Calcula a posição futura baseada na velocidade e no tempo do frame
         float nextX = enemies[i].x + (enemies[i].dirX * ENEMY_SPEED * deltaTime);
         int currentRow = enemies[i].pos.row;
+        int nextCol;
 
-        // Determina qual será a coluna limite à frente dependendo da direção
-        int nextCol = (enemies[i].dirX == 1) 
-                      ? (int)((nextX + TILE_SIZE - 1) / TILE_SIZE) 
-                      : (int)(nextX / TILE_SIZE);
+        // Determina qual coluna testar à frente dependendo da direção
+        if (enemies[i].dirX == 1) {
+            // Lado direito: testa a extremidade direita do retângulo do inimigo
+            nextCol = (int)((nextX + TILE_SIZE) / TILE_SIZE);
+        } else {
+            // Lado esquerdo: testa a extremidade esquerda (origem x).
+            // O truncamento automático do (int) deteta a invasão no bloco da esquerda imediatamente
+            nextCol = (int)(nextX / TILE_SIZE);
+        }
 
         bool turnAround = false;
 
-        // 1. Verificação de limites do mapa (paredes externas)
+        // 1. Verificação de limites das bordas do mapa
         if (nextCol < 0 || nextCol >= MAP_COLS) {
             turnAround = true;
         } else {
-            // 2. Colisão com obstáculo sólido 'Z' na mesma linha [cite: 29, 93]
+            // 2. Colisão com o obstáculo sólido 'Z' na mesma linha
             if (map.tiles[currentRow][nextCol] == 'Z') {
                 turnAround = true;
             }
 
-            // 3. Sensor de queda: Evita que o inimigo caminhe para fora da plataforma 
+            // 3. Sensor de queda: Evita que o inimigo caminhe para fora da plataforma
             int floorRow = currentRow + 1;
             if (floorRow < MAP_ROWS) {
                 char floorTile = map.tiles[floorRow][nextCol];
-                // Se o próximo bloco abaixo não for chão/escada válido, ele deve voltar [cite: 29]
+                // Se o próximo bloco abaixo não for chão ou escada válida, ele deve voltar
                 if (floorTile != 'Z' && floorTile != 'H' && floorTile != 'S' && floorTile != 'D') {
                     turnAround = true;
                 }
@@ -62,14 +67,18 @@ void UpdateEnemies(Enemy enemies[], int enemyCount, Map map) {
             }
         }
 
-        // Se encontrou parede ou fim de plataforma, inverte o sentido 
+        // Se encontrou parede ou fim de plataforma, inverte o sentido
         if (turnAround) {
             enemies[i].dirX *= -1; 
+            
+            // Alinhamento forçado (Snap to Grid): Garante que o inimigo não passe da borda
+            // reposicionando-o exatamente no início do bloco lógico atual em que ele já estava estável
+            enemies[i].x = enemies[i].pos.col * TILE_SIZE;
         } else {
-            enemies[i].x = nextX; // Aplica o movimento
+            enemies[i].x = nextX; // Movimento seguro aprovado
         }
 
-        // Atualiza a posição lógica da grade struct [cite: 49]
+        // Atualiza a posição lógica da grade struct (coluna e linha na matriz)
         enemies[i].pos.col = (int)((enemies[i].x + TILE_SIZE / 2) / TILE_SIZE);
         enemies[i].pos.row = (int)((enemies[i].y + TILE_SIZE / 2) / TILE_SIZE);
     }
@@ -84,7 +93,7 @@ void DrawEnemies(Enemy enemies[], int enemyCount) {
         Vector2 v2 = { enemies[i].x, enemies[i].y + TILE_SIZE };
         Vector2 v3 = { enemies[i].x + TILE_SIZE, enemies[i].y + TILE_SIZE };
 
-        DrawTriangle(v1, v2, v3, RED); // Use RED ou WHITE para destacar do jogador azul 
+        DrawTriangle(v1, v2, v3, RED);
         DrawTriangleLines(v1, v2, v3, MAROON);
     }
 }
