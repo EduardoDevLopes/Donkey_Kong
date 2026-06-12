@@ -4,8 +4,8 @@ ZZZZZZZZZZZZHZZZZZZZHZZZZZZZZ
      F   E  S       S       D
 ZZZZZZZZZZZZZZ    ZZZZZZZZZZHZZ
                             H
-   E       E  D             S  
-ZZZZZZ  ZZZZZZHZZZZZZZZZZZZZZZZZ               
+           E  D             S  
+        ZZZZZZHZZZZZZZZZZZZZZZZZ               
               H               
               H               
       P       S               
