@@ -86,7 +86,7 @@ int main(void) {
                 // Se jogador selecionou "Novo Jogo", inicializa uma nova partida
                 if (estadoAtual == STATE_PLAYING) {
                     // Reset absoluto de todas as variáveis para nova partida
-                    faseAtual = 2;              // Volta para fase 0
+                    faseAtual = 0;              // Volta para fase 0
                     tempoTotal = 0.0f;          // Zera o relógio
                     nomeJogador[0] = '\0';      // Limpa nome anterior
                     letrasCount = 0;            // Zera contador de letras
