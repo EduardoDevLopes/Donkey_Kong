@@ -26,10 +26,10 @@ typedef enum GameState {
 // VELOCIDADES DOS PERSONAGENS
 
 // Velocidade do jogador em pixels por segundo 
-#define PLAYER_SPEED 200.0f  
+#define PLAYER_SPEED 150.0f  
 
 // Velocidade dos inimigos em pixels por segundo
-#define ENEMY_SPEED 220.0f 
+#define ENEMY_SPEED 170.0f 
 
 // LIMITES DE DADOS
 
